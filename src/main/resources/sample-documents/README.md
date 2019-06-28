@@ -1,0 +1,1 @@
+put the documents in this directory (except the current one) into /var/akio/poc/gridfs
