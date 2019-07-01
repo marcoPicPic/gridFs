@@ -30,6 +30,9 @@ public class Interaction {
     @Column(name = "parsed_mail_id")
     private Integer parsedMailId;
 
+    @Column(name = "file_name")
+    private String fileName;
+
     @Column(name = "tenant_id")
     private Integer tenantId;
 
@@ -286,5 +289,13 @@ public class Interaction {
 
     public void setParsedMailId(Integer parsedMailId) {
         this.parsedMailId = parsedMailId;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 }
