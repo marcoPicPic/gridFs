@@ -3,6 +3,7 @@ package com.javatechie.spring.mongo.binary.api.controller;
 import com.javatechie.spring.mongo.binary.api.service.DataMigrationService;
 import com.javatechie.spring.mongo.binary.api.utils.Constants;
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
+import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -73,7 +75,7 @@ public class BinaryDataController {
 	}
 
 	@GetMapping("/all")
-	public void allInteraction() {
+	public void allInteraction() throws FileNotFoundException {
 		dataMigrationService.readView();
 	}
 
@@ -135,8 +137,11 @@ public class BinaryDataController {
 		return pocUtils.getHomeContent();
 	}
 
-	public void storeDocument(File file) {
 
+	public void storeDocumentAttachedFile(File file, DBObject metaData, String contentType) throws FileNotFoundException {
+		FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
+		gridFsOperations.store(fileInputStream, file.getName(), contentType,
+				metaData);
 	}
 
 }

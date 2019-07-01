@@ -12,4 +12,6 @@ public class Constants {
 
 
     public static final String FILE_ID = "5d1611d5584bad4d276e1fe6";
+    public static final String ATTACHMENTS_FOLDER_ABS_PATH = "/var/akio/user/data/fs/mails_Attachment/";
+    public static final String DIRECTORY_SEPERATOR = "/";
 }

@@ -33,6 +33,9 @@ public class Interaction {
     @Column(name = "file_name")
     private String fileName;
 
+    @Column(name = "attached_file_id")
+    private Integer attachedFileId;
+
     @Column(name = "tenant_id")
     private Integer tenantId;
 
@@ -297,5 +300,13 @@ public class Interaction {
 
     public void setFileName(String fileName) {
         this.fileName = fileName;
+    }
+
+    public Integer getAttachedFileId() {
+        return attachedFileId;
+    }
+
+    public void setAttachedFileId(Integer attachedFileId) {
+        this.attachedFileId = attachedFileId;
     }
 }
