@@ -8,6 +8,7 @@ CREATE OR REPLACE VIEW public.interaction_for_gridfs AS
     m.mail_date,
     m.mail_id,
     m.parsed_mail_id,
+    m.file_name,
     m.mail_body,
     m.tenant_id,
     m.thread_id,
@@ -41,6 +42,7 @@ CREATE OR REPLACE VIEW public.interaction_for_gridfs AS
             th.language_id AS thread_language_id,
             th.mailbox_id AS thread_queue_id,
             pp.parsed_mail_id AS parsed_mail_id,
+            pa.file_name AS file_name,
             th.indexft_modification_date,
             COALESCE(lower(m_1.contact_info::text), e.email::text) AS customer_email,
             th.operator_id,
@@ -53,6 +55,7 @@ CREATE OR REPLACE VIEW public.interaction_for_gridfs AS
                   WHERE postit.thread_id = th.id) AS notes
            FROM mails m_1
              LEFT JOIN parsed_parts pp ON m_1.parsed_mail_id = pp.parsed_mail_id
+             LEFT JOIN parsed_attachements pa ON m_1.parsed_mail_id = pa.parsed_mail_id
              LEFT JOIN threads th ON m_1.thread_id = th.id
              LEFT JOIN mailboxes mb ON th.mailbox_id = mb.id
              LEFT JOIN virtualdoms v ON v.id = mb.virtual_dom_id
@@ -60,7 +63,7 @@ CREATE OR REPLACE VIEW public.interaction_for_gridfs AS
              LEFT JOIN knowdoms k ON k.id = v.knowdom_id) m
      LEFT JOIN documents doc ON doc.mail_id = m.id AND (doc.deleted IS NULL OR doc.deleted = 0)
      LEFT JOIN voice_records vr ON vr.document_id = doc.id
-  GROUP BY m.id, m.mail_subject, m.mail_id, m.parsed_mail_id, m.mail_date, m.mail_body, m.tenant_id, m.thread_id, m.thread_priority, m.thread_desktop, m.thread_knowgroup_id, m.thread_language_id, m.thread_queue_id, m.indexft_modification_date, m.customer_email, m.operator_id, m.criteria_ids, m.notes, m.uuid_id;
+  GROUP BY m.id, m.mail_subject, m.mail_id, m.parsed_mail_id, m.file_name, m.mail_date, m.mail_body, m.tenant_id, m.thread_id, m.thread_priority, m.thread_desktop, m.thread_knowgroup_id, m.thread_language_id, m.thread_queue_id, m.indexft_modification_date, m.customer_email, m.operator_id, m.criteria_ids, m.notes, m.uuid_id;
 
 ALTER TABLE public.interaction_for_gridfs
   OWNER TO akio;
