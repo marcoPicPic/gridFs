@@ -1,20 +1,26 @@
 package com.javatechie.spring.mongo.binary.api.service;
 
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
+import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
+@Service
 public class DataMigrationService {
 
     @Autowired
-    GridFsService gridFsService;
+    private InteractionRepository interactionRepository;
+
+    @Autowired
+    private GridFsService gridFsService;
 
     //requete de la vue retrun interactions
-    private void readView(){
-        List<Interaction> interactionList = new ArrayList<>();
+    public void readView(){
+        List<Interaction> interactionList = interactionRepository.findAll();
         for(Interaction interaction:interactionList) {
             gridFsService.indexInteractionData(interaction);
             //write logs

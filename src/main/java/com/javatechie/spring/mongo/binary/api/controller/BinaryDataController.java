@@ -1,6 +1,7 @@
 package com.javatechie.spring.mongo.binary.api.controller;
 
 import com.javatechie.spring.mongo.binary.api.config.DocumentType;
+import com.javatechie.spring.mongo.binary.api.service.DataMigrationService;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.GridFSBucket;
@@ -42,6 +43,9 @@ public class BinaryDataController {
 
 	@Autowired
 	private GridFSBucket gridFSBucket;
+
+	@Autowired
+	private DataMigrationService dataMigrationService;
 
 	String fileId = "5d1611d5584bad4d276e1fe6";
 
@@ -134,6 +138,11 @@ public class BinaryDataController {
 	@GetMapping("/")
 	public String home() {
 		return getHomeContent();
+	}
+
+	@GetMapping("/all")
+	public void allInteraction() {
+		dataMigrationService.readView();
 	}
 
 	private String getHomeContent() {

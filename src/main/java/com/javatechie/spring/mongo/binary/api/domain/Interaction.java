@@ -1,32 +1,115 @@
 package com.javatechie.spring.mongo.binary.api.domain;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 import java.util.Date;
 
+
+@Entity
+@Table(name = "interaction_for_gridfs")
 public class Interaction {
 
+    @Id
+    @Column(name = "id")
     private Integer id;
+
+    @Column(name = "mail_subject")
     private String mailSubject;
+
+    @Column(name = "mail_date")
     private Date mailDate;
+
+    @Column(name = "mail_body")
     private String mailBody;
+
+    @Column(name = "mail_id")
     private Integer mailId;
+
+    @Column(name = "parsed_mail_id")
     private Integer parsedMailId;
+
+    @Column(name = "tenant_id")
     private Integer tenantId;
+
+    @Column(name = "thread_id")
     private Integer threadId;
+
+    @Column(name = "thread_priority")
     private Integer threadPriority;
+
+    @Column(name = "thread_desktop")
     private Integer threadDesktop;
+
+    @Column(name = "thread_knowgroup_id")
     private Integer threadKnowgroupId;
+
+    @Column(name = "thread_language_id")
     private Integer threadLanguageId;
+
+    @Column(name = "thread_queue_id")
     private Integer threadQueueId;
+
+    @Column(name = "indexft_modification_date")
     private Date indexftModificationDate;
+
+    @Column(name = "customer_email")
     private String customerEmail;
+
+    @Column(name = "operator_id")
     private Integer operatorId;
+
+    @Column(name = "criteria_ids")
     private String criteriaIds;
+
+    @Column(name = "notes")
     private String notes;
+
+    @Column(name = "vr_exist")
     private Integer vrExist;
+
+    @Column(name = "vr_operator_ids")
     private String vrOperatorIds;
+
+    @Column(name = "vr_requester_ids")
     private String vrRequesterIds;
+
+    @Column(name = "uuid_id")
     private String uuid;
 
+    public Interaction() {
+    }
+
+    public Interaction(Integer id, String mailSubject, Date mailDate, String mailBody,
+                       Integer mailId, Integer parsedMailId, Integer tenantId, Integer threadId,
+                       Integer threadPriority, Integer threadDesktop, Integer threadKnowgroupId,
+                       Integer threadLanguageId, Integer threadQueueId, Date indexftModificationDate,
+                       String customerEmail, Integer operatorId, String criteriaIds, String notes,
+                       Integer vrExist, String vrOperatorIds, String vrRequesterIds, String uuid) {
+        this.id = id;
+        this.mailSubject = mailSubject;
+        this.mailDate = mailDate;
+        this.mailBody = mailBody;
+        this.mailId = mailId;
+        this.parsedMailId = parsedMailId;
+        this.tenantId = tenantId;
+        this.threadId = threadId;
+        this.threadPriority = threadPriority;
+        this.threadDesktop = threadDesktop;
+        this.threadKnowgroupId = threadKnowgroupId;
+        this.threadLanguageId = threadLanguageId;
+        this.threadQueueId = threadQueueId;
+        this.indexftModificationDate = indexftModificationDate;
+        this.customerEmail = customerEmail;
+        this.operatorId = operatorId;
+        this.criteriaIds = criteriaIds;
+        this.notes = notes;
+        this.vrExist = vrExist;
+        this.vrOperatorIds = vrOperatorIds;
+        this.vrRequesterIds = vrRequesterIds;
+        this.uuid = uuid;
+    }
 
     public Integer getId() {
         return id;
