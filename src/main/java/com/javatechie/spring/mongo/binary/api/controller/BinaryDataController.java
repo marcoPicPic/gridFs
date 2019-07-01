@@ -76,7 +76,7 @@ public class BinaryDataController {
 
 	@GetMapping("/all")
 	public void allInteraction() throws IOException {
-		dataMigrationService.readView();
+		dataMigrationService.migrateInteractions();
 	}
 
 	@GetMapping("/retrieve/image")

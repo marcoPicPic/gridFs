@@ -82,7 +82,7 @@ public class Interaction {
     private String vrRequesterIds;
 
     @Column(name = "uuid_id")
-    private String uuid;
+    private String tenantUuid;
 
     public Interaction() {
     }
@@ -92,7 +92,7 @@ public class Interaction {
                        Integer threadPriority, Integer threadDesktop, Integer threadKnowgroupId,
                        Integer threadLanguageId, Integer threadQueueId, Date indexftModificationDate,
                        String customerEmail, Integer operatorId, String criteriaIds, String notes,
-                       Integer vrExist, String vrOperatorIds, String vrRequesterIds, String uuid) {
+                       Integer vrExist, String vrOperatorIds, String vrRequesterIds, String tenantUuid) {
         this.id = id;
         this.mailSubject = mailSubject;
         this.mailDate = mailDate;
@@ -114,7 +114,7 @@ public class Interaction {
         this.vrExist = vrExist;
         this.vrOperatorIds = vrOperatorIds;
         this.vrRequesterIds = vrRequesterIds;
-        this.uuid = uuid;
+        this.tenantUuid = tenantUuid;
     }
 
     public Integer getId() {
@@ -269,12 +269,12 @@ public class Interaction {
         this.vrRequesterIds = vrRequesterIds;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getTenantUuid() {
+        return tenantUuid;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setTenantUuid(String tenantUuid) {
+        this.tenantUuid = tenantUuid;
     }
 
 

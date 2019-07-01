@@ -1,2 +1,2 @@
 this is test 2 file for another tenant than f0e59e00-ed4c-4068-bf7c-f99e69ab4fc1.
-Let's say it a file for the tenant whose uuid is "c725b4b2-dabb-4c3f-a149-8fb40da331f6".
+Let's say it a file for the tenant whose tenantUuid is "c725b4b2-dabb-4c3f-a149-8fb40da331f6".

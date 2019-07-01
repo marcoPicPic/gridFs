@@ -55,7 +55,7 @@ public class Utils {
     public DBObject generateMetadata(Interaction interaction) {
         DBObject result = new BasicDBObject();
         result.put("tenantId", interaction.getTenantId());
-        result.put("tenantUuid", interaction.getUuid());
+        result.put("tenantUuid", interaction.getTenantUuid());
         result.put("threadId", interaction.getThreadId());
         result.put("documentType", getContentType(interaction.getFileName()));
         return result;
