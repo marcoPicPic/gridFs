@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 
 @Service
 public class GridFsService {
@@ -19,11 +20,11 @@ public class GridFsService {
     @Autowired
     private BinaryDataController binaryDataController;
 
-    public void indexInteractionData(Interaction interaction) throws FileNotFoundException {
+    public void indexInteractionData(Interaction interaction) throws IOException {
         importInteractionFile(interaction);
     }
 
-    private void importInteractionFile(Interaction interaction) throws FileNotFoundException {
+    private void importInteractionFile(Interaction interaction) throws IOException {
         String pathToFileToStore = utils.getAttachedFilePath(interaction);
         File fileToStore = new File(pathToFileToStore);
         DBObject metaData = utils.generateMetadata(interaction);

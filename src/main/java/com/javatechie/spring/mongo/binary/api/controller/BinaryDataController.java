@@ -75,7 +75,7 @@ public class BinaryDataController {
 	}
 
 	@GetMapping("/all")
-	public void allInteraction() throws FileNotFoundException {
+	public void allInteraction() throws IOException {
 		dataMigrationService.readView();
 	}
 
@@ -138,10 +138,11 @@ public class BinaryDataController {
 	}
 
 
-	public void storeDocumentAttachedFile(File file, DBObject metaData, String contentType) throws FileNotFoundException {
+	public void storeDocumentAttachedFile(File file, DBObject metaData, String contentType) throws IOException {
 		FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
 		gridFsOperations.store(fileInputStream, file.getName(), contentType,
 				metaData);
+		fileInputStream.close();
 	}
 
 }
