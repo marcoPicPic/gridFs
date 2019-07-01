@@ -140,7 +140,7 @@ public class PocUtils {
         if(fileName.endsWith(".png")) {
             MediaType.PNG.toString();
         }
-        // ...
+        // * TODO ... complete the media type detection on recurrent media types
         return MediaType.ANY_TYPE.toString();
     }
 
