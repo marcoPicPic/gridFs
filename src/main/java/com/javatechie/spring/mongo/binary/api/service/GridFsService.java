@@ -48,11 +48,11 @@ public class GridFsService {
     private   List<InteractionLog> interactionLogs = new ArrayList<>();
 
 
-    public InteractionLog indexInteractionData(Interaction interaction) throws IOException {
-        return importInteractionFile(interaction);
+    public InteractionLog indexInteractionData(Interaction interaction, String importCode) throws IOException {
+        return importInteractionFile(interaction, importCode);
     }
 
-    private InteractionLog importInteractionFile(Interaction interaction) throws IOException {
+    private InteractionLog importInteractionFile(Interaction interaction, String importCode) throws IOException {
 
         logger.info("Interaction threadId : " + interaction.getThreadId());
         File fileToStore = ResourceUtils.getFile("classpath:files/" + pocUtils.getFileNameRandom());
@@ -62,8 +62,6 @@ public class GridFsService {
         DBObject metaData = utils.generateMetadata(interaction, fileToStore);
         binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
 
-        //logs in elasticsearch
-        //writeLogs(interaction, fileName, fileSize);
         return new InteractionLog(
                 new Date(),
                 interaction.getTenantId(),
@@ -73,8 +71,9 @@ public class GridFsService {
                 interaction.getParsedMailId(),
                 fileSize,
                 fileName,
-                IMPORT_CODE);
+                importCode);
     }
+
 
 
 

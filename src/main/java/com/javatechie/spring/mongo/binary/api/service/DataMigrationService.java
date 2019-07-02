@@ -6,12 +6,14 @@ import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +37,7 @@ public class DataMigrationService {
 
     public static final int INDEX_COMMIT_SIZE = 5000;
 
-    public void migrateInteractions() throws IOException {
+    public void migrateInteractions() throws IOException, NoSuchAlgorithmException {
         logger.info("-------- START -------------");
         logger.info("Debut migrateInteractions : " + LocalDateTime.now());
         readInteractionsView(interactionRepository.findAll());
@@ -45,13 +47,13 @@ public class DataMigrationService {
 
 
     //requet view return interactions
-    public void readInteractionsView(List<Interaction> interactionList) {
-
+    public void readInteractionsView(List<Interaction> interactionList) throws IOException, NoSuchAlgorithmException {
         List<InteractionLog> interactionLogs = new ArrayList<>();
+        String importCode = Utils.generateUniqueImportCode();
 
         for (Interaction interaction : interactionList) {
             try {
-                interactionLogs.add(gridFsService.indexInteractionData(interaction));
+                interactionLogs.add(gridFsService.indexInteractionData(interaction, importCode));
             } catch (IOException e) {
                 logger.error("Erreur d'ecriture - threadId : " + interaction.getThreadId());
                 writeLogs(interactionLogs);

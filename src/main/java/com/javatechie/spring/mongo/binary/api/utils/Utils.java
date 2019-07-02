@@ -6,10 +6,20 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import org.springframework.stereotype.Component;
 
+import javax.xml.bind.DatatypeConverter;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.Date;
+
 import java.io.File;
 
 @Component
 public class Utils {
+
+    public static final String YYYY_MM_DD_T_HH_MM_SS_SSSZ = "yyyy-MM-dd'T'HH:mm:ss.SSSZ";
 
     public String getAttachedFilePath(Interaction interaction) {
         String hexaRepresentationOfId = Integer.toHexString(interaction.getAttachedFileId());
@@ -67,4 +77,30 @@ public class Utils {
         result.put("documentType", getContentType(fileToStore.getName()));
         return result;
     }
+
+    public static String generateUniqueImportCode() throws NoSuchAlgorithmException {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(YYYY_MM_DD_T_HH_MM_SS_SSSZ);
+        String nowString = simpleDateFormat.format(Date.from( LocalDateTime.now().atZone( ZoneId.systemDefault()).toInstant()));
+        MessageDigest md = MessageDigest.getInstance("MD5");
+        md.update(nowString.getBytes());
+        byte[] digest = md.digest();
+        return DatatypeConverter.printHexBinary(digest);
+    }
+
+    public static String generateMigrationReport() {
+        return "";
+    }
+
+    // * to delete
+    public static void writeFakeMigrationLogs() {
+
+    }
+
+    // * to delete
+    public static void testMigrationReportGeneration() {
+        writeFakeMigrationLogs();
+        System.out.println(generateMigrationReport());
+    }
+
+
 }

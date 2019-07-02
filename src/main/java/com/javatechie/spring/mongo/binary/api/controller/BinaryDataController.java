@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,7 @@ public class BinaryDataController {
 	}
 
 	@GetMapping("/all")
-	public void allInteraction() throws IOException {
+	public void allInteraction() throws IOException, NoSuchAlgorithmException {
 		dataMigrationService.migrateInteractions();
 	}
 
