@@ -47,7 +47,7 @@ public class InteractionLog {
 
     @Field(type = FieldType.Keyword)
     @JsonProperty("attached_file_size")
-    private Integer attachedFileSize;
+    private long attachedFileSize;
 
     @Field(type = FieldType.Keyword)
     @JsonProperty("attached_file_name")
@@ -57,7 +57,7 @@ public class InteractionLog {
     public InteractionLog( Date dateImport, Integer tenantId,
                           String tenantUuid, Integer threadId,
                           Integer mailId, Integer parsedMailId,
-                          Integer attachedFileSize, String attachedFileName, String importCode) {
+                          long attachedFileSize, String attachedFileName, String importCode) {
         this.tenantId = tenantId;
         this.dateImport = dateImport;
         this.tenantUuid = tenantUuid;
@@ -126,11 +126,11 @@ public class InteractionLog {
         this.parsedMailId = parsedMailId;
     }
 
-    public Integer getAttachedFileSize() {
+    public long getAttachedFileSize() {
         return attachedFileSize;
     }
 
-    public void setAttachedFileSize(Integer attachedFileSize) {
+    public void setAttachedFileSize(long attachedFileSize) {
         this.attachedFileSize = attachedFileSize;
     }
 

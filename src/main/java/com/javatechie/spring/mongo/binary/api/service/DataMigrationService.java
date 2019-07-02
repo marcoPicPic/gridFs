@@ -2,28 +2,38 @@ package com.javatechie.spring.mongo.binary.api.service;
 
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
+import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 @Service
 public class DataMigrationService {
+    Logger logger = LoggerFactory.getLogger(DataMigrationService.class);
 
-    private static final int NUMBER_OF_INTERACTION = 10000;
     @Autowired
     private InteractionRepository interactionRepository;
 
     @Autowired
     private GridFsService gridFsService;
 
+    @Autowired
+    private PocUtils pocUtils;
+
 
     public void migrateInteractions() throws IOException {
+        logger.info("-------- START -------------");
+        logger.info("Debut migrateInteractions : " + LocalDateTime.now());
         readInteractionsView(interactionRepository.findAll());
-        readInteractionsRandom();
+        logger.info("fin migrateInteractions : " + LocalDateTime.now());
+        //readInteractionsRandom();
     }
 
 
@@ -36,7 +46,7 @@ public class DataMigrationService {
     }
 
     private void readInteractionsRandom() {
-        List<Interaction> interactionList  = createOtherThread();
+        List<Interaction> interactionList  = pocUtils.createOtherThread();
         for (Interaction interaction : interactionList) {
             //TODO
             // gridFsService.indexInteractionDataRandom(interaction);
@@ -45,44 +55,5 @@ public class DataMigrationService {
 
     }
 
-    private List<Interaction> createOtherThread() {
-        List<Interaction> interactions = new ArrayList<>();
-        for(int i=0; i< NUMBER_OF_INTERACTION; i++)
-            interactions.add(createInteraction());
 
-        return interactions;
-
-    }
-
-    private Interaction createInteraction() {
-
-        Interaction interaction = new Interaction();
-        interaction.setId(getRandomNumber(9999, 1000000));
-        interaction.setMailId(getRandomNumber(9999, 1000000));
-        interaction.setFileName(getFileNameRandom());
-        return interaction;
-    }
-
-
-    private String getFileNameRandom(){
-        return getTypeFile(getRandomNumber(0, 2)) + "_file_" + getRandomNumber(1, 3);
-    }
-
-    private String getTypeFile(int typeFile) {
-
-        switch (typeFile) {
-            case 0 : return "little";
-            case 1 : return "medium";
-            case 2 : return "big";
-            default:
-                // code block
-        }
-        return "";
-    }
-
-
-    private int getRandomNumber(int low, int high) {
-        Random r = new Random();
-        return r.nextInt(high - low) + low;
-    }
 }

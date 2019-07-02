@@ -14,9 +14,14 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 @Component
 public class PocUtils {
+
+    private static final int NUMBER_OF_INTERACTION = 10000;
 
     @Autowired
     private GridFsOperations gridFsOperations;
@@ -99,5 +104,46 @@ public class PocUtils {
         System.out.println(fileContent);
 
         System.out.println("File name : " + file.getFilename() + " content : " + fileContent);
+    }
+
+    public List<Interaction> createOtherThread() {
+        List<Interaction> interactions = new ArrayList<>();
+        for(int i=0; i< NUMBER_OF_INTERACTION; i++)
+            interactions.add(createInteraction());
+
+        return interactions;
+
+    }
+
+    private Interaction createInteraction() {
+
+        Interaction interaction = new Interaction();
+        interaction.setId(getRandomNumber(9999, 1000000));
+        interaction.setMailId(getRandomNumber(9999, 1000000));
+        interaction.setFileName(getFileNameRandom());
+        return interaction;
+    }
+
+
+    public String getFileNameRandom(){
+        return getTypeFile(getRandomNumber(0, 2)) + "_file_" + getRandomNumber(1, 3) + ".pdf";
+    }
+
+    private String getTypeFile(int typeFile) {
+
+        switch (typeFile) {
+            case 0 : return "little";
+            case 1 : return "medium";
+            case 2 : return "big";
+            default:
+                // code block
+        }
+        return "";
+    }
+
+
+    private int getRandomNumber(int low, int high) {
+        Random r = new Random();
+        return r.nextInt(high - low) + low;
     }
 }

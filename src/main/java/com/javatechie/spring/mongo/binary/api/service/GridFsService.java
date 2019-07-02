@@ -4,13 +4,14 @@ import com.javatechie.spring.mongo.binary.api.controller.BinaryDataController;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionLogRepository;
+import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
 import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import com.mongodb.DBObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Date;
 
@@ -28,6 +29,9 @@ public class GridFsService {
     @Autowired
     private InteractionLogRepository interactionLogRepository;
 
+    @Autowired
+    private PocUtils pocUtils;
+
 
     public void indexInteractionData(Interaction interaction) throws IOException {
         importInteractionFile(interaction);
@@ -35,22 +39,21 @@ public class GridFsService {
 
     private void importInteractionFile(Interaction interaction) throws IOException {
 
-        String fileName = "";
-        int fileSize = 0;
-        if(interaction.getAttachedFileId()!= null) {
-            String pathToFileToStore = utils.getAttachedFilePath(interaction);
-            if(!pathToFileToStore.isEmpty()) {
-                System.out.println("pathToFileToStore");
-                File fileToStore = new File(pathToFileToStore);
-                DBObject metaData = utils.generateMetadata(interaction);
-                binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
-            }
-        }
 
+        System.out.println("pathToFileToStore");
+        //File fileToStore = new File(pocUtils.getFileNameRandom());
+        File fileToStore = ResourceUtils.getFile("classpath:files/" + pocUtils.getFileNameRandom());
+
+        String fileName = fileToStore.getName();
+        long fileSize = fileToStore.getTotalSpace();
+        DBObject metaData = utils.generateMetadata(interaction, fileToStore);
+        binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
+
+        //logs in elasticsearch
         writeLogs(interaction, fileName, fileSize);
     }
 
-    private void writeLogs(Interaction interaction, String fileName, Integer fileSize) {
+    private void writeLogs(Interaction interaction, String fileName, long fileSize) {
         interactionLogRepository.save(new InteractionLog(
                 new Date(),
                 interaction.getTenantId(),
