@@ -26,9 +26,9 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 
-@RestController
+//@RestController
 public class BinaryDataController {
-
+/*
 	@Autowired
 	private GridFsOperations gridFsOperations;
 
@@ -145,5 +145,5 @@ public class BinaryDataController {
 				metaData);
 		fileInputStream.close();
 	}
-
+*/
 }

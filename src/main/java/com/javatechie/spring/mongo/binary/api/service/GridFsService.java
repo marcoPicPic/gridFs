@@ -58,7 +58,7 @@ public class GridFsService {
         File fileToStore = ResourceUtils.getFile("classpath:files/" + pocUtils.getFileNameRandom());
 
         String fileName = fileToStore.getName();
-        long fileSize = fileToStore.getTotalSpace();
+        long fileSize = fileToStore.length();
         DBObject metaData = utils.generateMetadata(interaction, fileToStore);
         binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
 

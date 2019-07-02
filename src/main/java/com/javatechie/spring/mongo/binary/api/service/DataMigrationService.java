@@ -1,5 +1,6 @@
 package com.javatechie.spring.mongo.binary.api.service;
 
+import com.javatechie.spring.mongo.binary.api.domain.DocumentMigrate;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,29 +40,40 @@ public class DataMigrationService {
     public static final int INDEX_COMMIT_SIZE = 5000;
 
     public void migrateInteractions() throws IOException, NoSuchAlgorithmException {
+        LocalDateTime startDate = LocalDateTime.now();
         logger.info("-------- START -------------");
-        logger.info("Debut migrateInteractions : " + LocalDateTime.now());
-        readInteractionsView(interactionRepository.findAll());
+
+        DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll());
+        logger.info("Debut migrateInteractions : " + startDate);
         logger.info("fin migrateInteractions : " + LocalDateTime.now());
+        logger.info("Temps total de la migration (secondes): " + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()));
+        logger.info("Nombre de documents copiés : " + documentMigrate.getNumberOfDocument());
+        logger.info("Total des données copiées : " + documentMigrate.getSizeOfDocument());
+        logger.info("-------- END -------------");
         //readInteractionsRandom();
     }
 
 
-    //requet view return interactions
-    public void readInteractionsView(List<Interaction> interactionList) throws IOException, NoSuchAlgorithmException {
+    public DocumentMigrate readInteractionsView(List<Interaction> interactionList) {
+        long counter =0;
+        long size = 0;
         List<InteractionLog> interactionLogs = new ArrayList<>();
         String importCode = Utils.generateUniqueImportCode();
 
         for (Interaction interaction : interactionList) {
             try {
                 interactionLogs.add(gridFsService.indexInteractionData(interaction, importCode));
+                interactionLogs.add(interactionLog);
+                counter++;
+                size += interactionLog.getAttachedFileSize();
             } catch (IOException e) {
                 logger.error("Erreur d'ecriture - threadId : " + interaction.getThreadId());
                 writeLogs(interactionLogs);
+                return new DocumentMigrate(counter++, size);
             }
         }
-
         writeLogs(interactionLogs);
+        return new DocumentMigrate(counter++, size);
     }
 
     private void readInteractionsRandom() {
@@ -73,63 +86,6 @@ public class DataMigrationService {
 
     }
 
-   /* private void writeLogs(List<InteractionLog> interactionLogs) {
-
-        /*List<IndexQuery> queries = new ArrayList<>();
-        IndexQuery indexQuery = new IndexQuery();
-        indexQuery.setObject(new InteractionLog(
-                new Date(),
-                interaction.getTenantId(),
-                interaction.getTenantUuid(),
-                interaction.getThreadId(),
-                interaction.getMailId(),
-                interaction.getParsedMailId(),
-                fileSize,
-                fileName,
-                IMPORT_CODE));
-        queries.add(indexQuery);
-        elasticsearchOperations.bulkIndex(queries);
-        queries.clear();
-        elasticsearchOperations.refresh(InteractionLog.class);*/
-
-
-
-        /*interactionLogRepository.save(new InteractionLog(
-                new Date(),
-                interaction.getTenantId(),
-                interaction.getTenantUuid(),
-                interaction.getThreadId(),
-                interaction.getMailId(),
-                interaction.getParsedMailId(),
-                fileSize,
-                fileName,
-                IMPORT_CODE));
-        interactionLogRepository.refresh();*/
-
-        /*interactionLogs.add(new InteractionLog(
-                new Date(),
-                interaction.getTenantId(),
-                interaction.getTenantUuid(),
-                interaction.getThreadId(),
-                interaction.getMailId(),
-                interaction.getParsedMailId(),
-                fileSize,
-                fileName,
-                IMPORT_CODE));
-*/
-
-    /*    elasticsearchOperations.bulkIndex(new InteractionLog(
-                new Date(),
-                interaction.getTenantId(),
-                interaction.getTenantUuid(),
-                interaction.getThreadId(),
-                interaction.getMailId(),
-                interaction.getParsedMailId(),
-                fileSize,
-                fileName,
-                IMPORT_CODE), Interaction.class);*/
-    //}
-
     public void writeLogs(List<InteractionLog> interactionLogs) {
         int counter = 0;
         List<IndexQuery> queries = new ArrayList<>();
@@ -141,7 +97,7 @@ public class DataMigrationService {
             if (counter % INDEX_COMMIT_SIZE == 0) {
                 elasticsearchOperations.bulkIndex(queries);
                 queries.clear();
-                logger.debug("saveAllByIndexName counter : {}", counter);
+                logger.debug("writeLogs counter : {}", counter);
             }
             counter++;
         }
@@ -149,7 +105,7 @@ public class DataMigrationService {
             elasticsearchOperations.bulkIndex(queries);
         }
         elasticsearchOperations.refresh(InteractionLog.class);
-        logger.debug("saveAllByIndexName completed for index Name : {}", InteractionLog.class);
+        logger.debug("writeLogs completed for index Name : {}", InteractionLog.class);
     }
 
 
