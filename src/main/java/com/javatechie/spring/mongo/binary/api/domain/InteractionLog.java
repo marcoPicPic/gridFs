@@ -53,11 +53,10 @@ public class InteractionLog {
     @JsonProperty("attached_file_name")
     private String attachedFileName;
 
-
     public InteractionLog( Date dateImport, Integer tenantId,
-                          String tenantUuid, Integer threadId,
-                          Integer mailId, Integer parsedMailId,
-                          long attachedFileSize, String attachedFileName, String importCode) {
+                           String tenantUuid, Integer threadId,
+                           Integer mailId, Integer parsedMailId,
+                           long attachedFileSize, String attachedFileName, String importCode) {
         this.tenantId = tenantId;
         this.dateImport = dateImport;
         this.tenantUuid = tenantUuid;
@@ -69,6 +68,9 @@ public class InteractionLog {
         this.importCode = importCode;
     }
 
+    public InteractionLog() {
+        super();
+    }
 
     public Integer getId() {
         return id;
