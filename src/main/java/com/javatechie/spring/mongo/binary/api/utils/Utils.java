@@ -11,16 +11,21 @@ public class Utils {
 
     public String getAttachedFilePath(Interaction interaction) {
         String hexaRepresentationOfId = Integer.toHexString(interaction.getAttachedFileId());
+        System.out.printf("getAttachedFilePath : " + hexaRepresentationOfId);
         // 00/00/00/02
         return convertToFilePathOnEightDigits(hexaRepresentationOfId);
     }
 
     private String convertToFilePathOnEightDigits(String hexaRepresentationOfId) {
         String hexaRepresentationOfIdOnEightDigits = adjustStringLengthIfNecessary(hexaRepresentationOfId);
-        return hexaRepresentationOfIdOnEightDigits.substring(0,1) + Constants.DIRECTORY_SEPERATOR +
-                hexaRepresentationOfIdOnEightDigits.substring(2,3) + Constants.DIRECTORY_SEPERATOR +
-                hexaRepresentationOfIdOnEightDigits.substring(4,5) + Constants.DIRECTORY_SEPERATOR +
-                hexaRepresentationOfIdOnEightDigits.substring(6,7);
+        System.out.println("hexaRepresentationOfIdOnEightDigits" + hexaRepresentationOfIdOnEightDigits);
+        if(hexaRepresentationOfIdOnEightDigits.length() == 8) {
+            return hexaRepresentationOfIdOnEightDigits.substring(0,1) + Constants.DIRECTORY_SEPERATOR +
+                    hexaRepresentationOfIdOnEightDigits.substring(2,3) + Constants.DIRECTORY_SEPERATOR +
+                    hexaRepresentationOfIdOnEightDigits.substring(4,5) + Constants.DIRECTORY_SEPERATOR +
+                    hexaRepresentationOfIdOnEightDigits.substring(6,7);
+        }
+        return "";
     }
 
     private String adjustStringLengthIfNecessary(String hexaRepresentationOfId) {

@@ -18,6 +18,10 @@ public class InteractionLog {
     private Integer id;
 
     @Field(type = FieldType.Integer)
+    @JsonProperty("import_code")
+    private String importCode;
+
+    @Field(type = FieldType.Integer)
     @JsonProperty("tenant_id")
     private Integer tenantId;
 
@@ -41,15 +45,30 @@ public class InteractionLog {
     @JsonProperty("parsed_mail_id")
     private Integer parsedMailId;
 
+    @Field(type = FieldType.Keyword)
+    @JsonProperty("attached_file_size")
+    private Integer attachedFileSize;
 
-    public InteractionLog( Date dateImport,Integer tenantId, String tenantUuid, Integer threadId, Integer mailId, Integer parsedMailId) {
+    @Field(type = FieldType.Keyword)
+    @JsonProperty("attached_file_name")
+    private String attachedFileName;
+
+
+    public InteractionLog( Date dateImport, Integer tenantId,
+                          String tenantUuid, Integer threadId,
+                          Integer mailId, Integer parsedMailId,
+                          Integer attachedFileSize, String attachedFileName, String importCode) {
         this.tenantId = tenantId;
         this.dateImport = dateImport;
         this.tenantUuid = tenantUuid;
         this.threadId = threadId;
         this.mailId = mailId;
         this.parsedMailId = parsedMailId;
+        this.attachedFileSize = attachedFileSize;
+        this.attachedFileName = attachedFileName;
+        this.importCode = importCode;
     }
+
 
     public Integer getId() {
         return id;
@@ -105,5 +124,29 @@ public class InteractionLog {
 
     public void setParsedMailId(Integer parsedMailId) {
         this.parsedMailId = parsedMailId;
+    }
+
+    public Integer getAttachedFileSize() {
+        return attachedFileSize;
+    }
+
+    public void setAttachedFileSize(Integer attachedFileSize) {
+        this.attachedFileSize = attachedFileSize;
+    }
+
+    public String getAttachedFileName() {
+        return attachedFileName;
+    }
+
+    public void setAttachedFileName(String attachedFileName) {
+        this.attachedFileName = attachedFileName;
+    }
+
+    public String getImportCode() {
+        return importCode;
+    }
+
+    public void setImportCode(String importCode) {
+        this.importCode = importCode;
     }
 }
