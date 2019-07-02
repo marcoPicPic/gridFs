@@ -1,6 +1,7 @@
 package com.javatechie.spring.mongo.binary.api;
 
 import com.javatechie.spring.mongo.binary.api.service.DataMigrationService;
+import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -11,8 +12,11 @@ import org.springframework.boot.autoconfigure.data.elasticsearch.ElasticsearchDa
 @SpringBootApplication(exclude = {ElasticsearchAutoConfiguration.class, ElasticsearchDataAutoConfiguration.class})
 public class SpringMongoGridFsApplication implements CommandLineRunner {
 
-	@Autowired
-	DataMigrationService dataMigrationService;
+    @Autowired
+    DataMigrationService dataMigrationService;
+
+    @Autowired
+    Utils utils;
 
 	public static void main(String[] args) {
 		SpringApplication.run(SpringMongoGridFsApplication.class, args);
@@ -21,6 +25,7 @@ public class SpringMongoGridFsApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		//execute import in gridfs
-		dataMigrationService.migrateInteractions();
+		//dataMigrationService.migrateInteractions();
+        utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B");
 	}
 }

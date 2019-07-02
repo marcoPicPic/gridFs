@@ -25,4 +25,12 @@ public class DocumentMigrate {
     public void setSizeOfDocument(long sizeOfDocument) {
         this.sizeOfDocument = sizeOfDocument;
     }
+
+    public void incrementNumberOfDocuments(int i) {
+        numberOfDocument = numberOfDocument + i;
+    }
+
+    public void incrementSizeOfDocument(long attachedFileSize) {
+        sizeOfDocument = sizeOfDocument + attachedFileSize;
+    }
 }
