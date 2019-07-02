@@ -66,6 +66,12 @@ public class DataMigrationService {
                 interactionLogs.add(interactionLog);
                 counter++;
                 size += interactionLog.getAttachedFileSize();
+
+                //TODO to clean
+                if(counter == 10) {
+                    writeLogs(interactionLogs);
+                    return new DocumentMigrate(counter++, size);
+                }
             } catch (IOException e) {
                 logger.error("Erreur d'ecriture - threadId : " + interaction.getThreadId());
                 writeLogs(interactionLogs);

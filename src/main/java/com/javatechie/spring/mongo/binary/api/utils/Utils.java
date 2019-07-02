@@ -136,7 +136,7 @@ public class Utils {
 
     private String buildSummaryMessage(ImportSummary importResultsSummary) {
         StringBuilder summary = new StringBuilder();
-        summary.append("==================================== IMPORT SUMMARY ====================================");
+        summary.append("\n==================================== IMPORT SUMMARY ====================================");
         summary.append("\n");
         summary.append(" import : " + importResultsSummary.getImportCode());
         Set<Integer> tenantIds = importResultsSummary.getInfosByTenant().keySet();
@@ -189,7 +189,25 @@ public class Utils {
     public ImportSummary getImportResultsSummary(String importCode) {
         ImportSummary importSummary = new ImportSummary();
         importSummary.setImportCode(importCode);
-        Iterable<InteractionLog> all = interactionLogRepository.findByImportCode(importCode);
+        //Iterable<InteractionLog> all = interactionLogRepository.findByImportCode(importCode);
+        BoolQueryBuilder filter = new BoolQueryBuilder();
+
+        // Client space
+        filter.must(QueryBuilders.termQuery("import_code", importCode));
+
+        //Query
+        SearchQuery query = new NativeSearchQueryBuilder()
+                .withQuery(matchAllQuery())
+                .withFilter(filter)
+                //.withSort(new FieldSortBuilder(ElasticConstant.DATE_STAT).order(SortOrder.DESC))
+                .withPageable(PageRequest.of(0, 10000))
+                .build();
+
+        //Result
+        Page<InteractionLog> all = elasticsearchTemplate.queryForPage(
+                query,
+                InteractionLog.class);
+
         for(InteractionLog current : all) {
             importSummary.add(current);
         }
