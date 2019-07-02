@@ -5,9 +5,9 @@ import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
+import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.query.IndexQuery;
@@ -54,7 +54,7 @@ public class DataMigrationService {
     }
 
 
-    public DocumentMigrate readInteractionsView(List<Interaction> interactionList) {
+    public DocumentMigrate readInteractionsView(List<Interaction> interactionList) throws NoSuchAlgorithmException {
         long counter =0;
         long size = 0;
         List<InteractionLog> interactionLogs = new ArrayList<>();
@@ -62,7 +62,7 @@ public class DataMigrationService {
 
         for (Interaction interaction : interactionList) {
             try {
-                interactionLogs.add(gridFsService.indexInteractionData(interaction, importCode));
+                InteractionLog interactionLog = gridFsService.indexInteractionData(interaction, importCode);
                 interactionLogs.add(interactionLog);
                 counter++;
                 size += interactionLog.getAttachedFileSize();

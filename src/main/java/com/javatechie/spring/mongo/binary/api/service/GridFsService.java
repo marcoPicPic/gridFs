@@ -1,6 +1,5 @@
 package com.javatechie.spring.mongo.binary.api.service;
 
-import com.javatechie.spring.mongo.binary.api.controller.BinaryDataController;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionLogRepository;
@@ -11,11 +10,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.IndexQuery;
+import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -31,8 +31,6 @@ public class GridFsService {
     @Autowired
     private Utils utils;
 
-    @Autowired
-    private BinaryDataController binaryDataController;
 
     @Autowired
     private InteractionLogRepository interactionLogRepository;
@@ -42,6 +40,9 @@ public class GridFsService {
 
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
+
+    @Autowired
+    private GridFsOperations gridFsOperations;
 
     public static final int INDEX_COMMIT_SIZE = 5000;
 
@@ -60,7 +61,7 @@ public class GridFsService {
         String fileName = fileToStore.getName();
         long fileSize = fileToStore.length();
         DBObject metaData = utils.generateMetadata(interaction, fileToStore);
-        binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
+       storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
 
         return new InteractionLog(
                 new Date(),
@@ -76,7 +77,12 @@ public class GridFsService {
 
 
 
-
+    private void storeDocumentAttachedFile(File file, DBObject metaData, String contentType) throws IOException {
+        FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
+        gridFsOperations.store(fileInputStream, file.getName(), contentType,
+                metaData);
+        fileInputStream.close();
+    }
 
 
 
