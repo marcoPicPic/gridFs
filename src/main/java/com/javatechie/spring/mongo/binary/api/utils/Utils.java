@@ -115,6 +115,8 @@ public class Utils {
         result.put("tenantUuid", interaction.getTenantUuid());
         result.put("threadId", interaction.getThreadId());
         result.put("documentType", getContentType(fileToStore.getName()));
+        result.put("emailId", interaction.getMailId());
+        result.put("parsedMailId", interaction.getParsedMailId());
         return result;
     }
 
