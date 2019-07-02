@@ -7,16 +7,24 @@ import com.javatechie.spring.mongo.binary.api.repository.InteractionLogRepositor
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
 import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import com.mongodb.DBObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
+import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class GridFsService {
+
+    Logger logger = LoggerFactory.getLogger(GridFsService.class);
 
     //TODO generate code import unique by import
     private static final String IMPORT_CODE = "test";
@@ -32,16 +40,21 @@ public class GridFsService {
     @Autowired
     private PocUtils pocUtils;
 
+    @Autowired
+    private ElasticsearchOperations elasticsearchOperations;
 
-    public void indexInteractionData(Interaction interaction) throws IOException {
-        importInteractionFile(interaction);
+    public static final int INDEX_COMMIT_SIZE = 5000;
+
+    private   List<InteractionLog> interactionLogs = new ArrayList<>();
+
+
+    public InteractionLog indexInteractionData(Interaction interaction) throws IOException {
+        return importInteractionFile(interaction);
     }
 
-    private void importInteractionFile(Interaction interaction) throws IOException {
+    private InteractionLog importInteractionFile(Interaction interaction) throws IOException {
 
-
-        System.out.println("pathToFileToStore");
-        //File fileToStore = new File(pocUtils.getFileNameRandom());
+        logger.info("Interaction threadId : " + interaction.getThreadId());
         File fileToStore = ResourceUtils.getFile("classpath:files/" + pocUtils.getFileNameRandom());
 
         String fileName = fileToStore.getName();
@@ -50,11 +63,8 @@ public class GridFsService {
         binaryDataController.storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
 
         //logs in elasticsearch
-        writeLogs(interaction, fileName, fileSize);
-    }
-
-    private void writeLogs(Interaction interaction, String fileName, long fileSize) {
-        interactionLogRepository.save(new InteractionLog(
+        //writeLogs(interaction, fileName, fileSize);
+        return new InteractionLog(
                 new Date(),
                 interaction.getTenantId(),
                 interaction.getTenantUuid(),
@@ -63,8 +73,13 @@ public class GridFsService {
                 interaction.getParsedMailId(),
                 fileSize,
                 fileName,
-                IMPORT_CODE));
+                IMPORT_CODE);
     }
+
+
+
+
+
 
 
 }
