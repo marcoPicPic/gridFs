@@ -20,7 +20,7 @@ public class ImportSummary {
             documentMigrate.incrementNumberOfDocuments(1);
             documentMigrate.incrementSizeOfDocument(current.getAttachedFileSize());
         } else {
-            DocumentMigrate documentMigrate = new DocumentMigrate(1, current.getAttachedFileSize());
+            DocumentMigrate documentMigrate = new DocumentMigrate(1, current.getAttachedFileSize(), importCode);
             infosByTenant.put(current.getTenantId(), documentMigrate);
         }
     }

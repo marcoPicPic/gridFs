@@ -5,11 +5,13 @@ public class DocumentMigrate {
     private long numberOfDocument = 0;
     private long sizeOfDocument = 0;
     private long time;
+    private String importCode;
     private String report;
 
-    public DocumentMigrate(long numberOfDocument, long sizeOfDocument) {
+    public DocumentMigrate(long numberOfDocument, long sizeOfDocument, String importCode) {
         this.numberOfDocument = numberOfDocument;
         this.sizeOfDocument = sizeOfDocument;
+        this.importCode = importCode;
     }
 
     public DocumentMigrate() {
@@ -53,5 +55,13 @@ public class DocumentMigrate {
 
     public void setReport(String report) {
         this.report = report;
+    }
+
+    public String getImportCode() {
+        return importCode;
+    }
+
+    public void setImportCode(String importCode) {
+        this.importCode = importCode;
     }
 }

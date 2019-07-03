@@ -83,16 +83,16 @@ public class DataMigrationService {
 
                 if(counter == nbFile) {
                     writeLogs(interactionLogs);
-                    return new DocumentMigrate(counter++, size);
+                    return new DocumentMigrate(counter++, size, importCode);
                 }
             } catch (IOException e) {
                 logger.error("Erreur d'ecriture - threadId : " + interaction.getThreadId());
                 writeLogs(interactionLogs);
-                return new DocumentMigrate(counter++, size);
+                return new DocumentMigrate(counter++, size, importCode);
             }
         }
         writeLogs(interactionLogs);
-        return new DocumentMigrate(counter++, size);
+        return new DocumentMigrate(counter++, size, importCode);
     }
 
     private void readInteractionsRandom() {

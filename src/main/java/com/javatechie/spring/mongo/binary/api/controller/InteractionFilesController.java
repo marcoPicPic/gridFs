@@ -87,7 +87,7 @@ public class InteractionFilesController {
     @GetMapping("/all/nb/{nbFile}")
     public DocumentMigrate allInteraction(@PathVariable int nbFile) throws IOException, NoSuchAlgorithmException {
         DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions(nbFile);
-        documentMigrate.setReport(utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B"));
+        documentMigrate.setReport(utils.generateMigrationReport(documentMigrate.getImportCode()));
         return documentMigrate;
     }
 

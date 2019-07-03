@@ -17,7 +17,7 @@ public class InteractionLog {
     @Field(type = FieldType.Integer)
     private Integer id;
 
-    @Field(type = FieldType.Integer)
+    @Field(type = FieldType.Keyword)
     @JsonProperty("import_code")
     private String importCode;
 

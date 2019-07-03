@@ -138,15 +138,15 @@ public class Utils {
 
     private String buildSummaryMessage(ImportSummary importResultsSummary) {
         StringBuilder summary = new StringBuilder();
-        summary.append("\n==================================== IMPORT SUMMARY ====================================");
-        summary.append("\n");
-        summary.append(" import : " + importResultsSummary.getImportCode());
+        summary.append("\n<br/>==================================== IMPORT SUMMARY ====================================");
+        summary.append("\n<br/>");
+        summary.append(" import : " + importResultsSummary.getImportCode() + "\n<br/>");
         Set<Integer> tenantIds = importResultsSummary.getInfosByTenant().keySet();
         for(Integer tenantId : tenantIds) {
-            summary.append("tenant id : " + tenantId + " ");
-            summary.append("number of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getNumberOfDocument() + " ");
-            summary.append("volume of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getSizeOfDocument() + " ");
-            summary.append("\n");
+            summary.append("tenant id : " + tenantId + " \n<br/>");
+            summary.append("number of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getNumberOfDocument() + " \n<br/>");
+            summary.append("volume of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getSizeOfDocument() + " \n<br/>");
+            summary.append("\n<br/>");
         }
         return summary.toString();
     }
@@ -195,7 +195,7 @@ public class Utils {
         BoolQueryBuilder filter = new BoolQueryBuilder();
 
         // import_code
-        filter.must(QueryBuilders.termQuery("import_code", importCode));
+        filter.must(QueryBuilders.termQuery("import_code.keyword", importCode));
 
         //Query
         SearchQuery query = new NativeSearchQueryBuilder()
