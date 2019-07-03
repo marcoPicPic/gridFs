@@ -44,13 +44,13 @@ public class DataMigrationService {
     public static final int INDEX_COMMIT_SIZE = 5000;
 
 
-    public DocumentMigrate migrateInteractions() throws IOException, NoSuchAlgorithmException {
+    public DocumentMigrate migrateInteractions(int nbFile) throws IOException, NoSuchAlgorithmException {
         StringBuilder stringBuilder = new StringBuilder();
 
         LocalDateTime startDate = LocalDateTime.now();
         stringBuilder.append("\n-------- START -------------");
 
-        DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll());
+        DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll(), nbFile);
         stringBuilder.append("\n<b>Debut migrateInteractions : </b>" + startDate);
         stringBuilder.append("\n<br><b>fin migrateInteractions : </b>" + LocalDateTime.now());
         stringBuilder.append("\n<br><b>Temps total de la migration (secondes): </b>" + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()) + " sec");
@@ -68,7 +68,7 @@ public class DataMigrationService {
     }
 
 
-    public DocumentMigrate readInteractionsView(List<Interaction> interactionList) throws NoSuchAlgorithmException {
+    public DocumentMigrate readInteractionsView(List<Interaction> interactionList, int nbFile) throws NoSuchAlgorithmException {
         long counter =0;
         long size = 0;
         List<InteractionLog> interactionLogs = new ArrayList<>();
@@ -81,8 +81,7 @@ public class DataMigrationService {
                 counter++;
                 size += interactionLog.getAttachedFileSize();
 
-                //TODO to clean for the test
-                if(counter == NBR_MAX_IMPORT) {
+                if(counter == nbFile) {
                     writeLogs(interactionLogs);
                     return new DocumentMigrate(counter++, size);
                 }

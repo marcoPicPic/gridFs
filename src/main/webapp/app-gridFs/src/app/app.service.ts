@@ -11,9 +11,9 @@ export class AppService {
 
     constructor(private http: HttpClient) {}
 
-    public getMigrateFile(): Observable<HttpResponse<Report>> {
+    public getMigrateFile(nbFile: number): Observable<HttpResponse<Report>> {
         return this.http.get<Report>(
-          `${this.resourceUrl}/all`, { observe: 'response' });
+          `${this.resourceUrl}/all/nb/${nbFile}`, { observe: 'response' });
       }
 
       public getInfoDocumentByEmailId(emailId: number): Observable<HttpResponse<Document>> {

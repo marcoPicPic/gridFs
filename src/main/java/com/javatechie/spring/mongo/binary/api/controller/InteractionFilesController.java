@@ -84,9 +84,9 @@ public class InteractionFilesController {
         return resultList.size() + " files stored successfully..." + pocUtils.getHomeContent();
     }
 
-    @GetMapping("/all")
-    public DocumentMigrate allInteraction() throws IOException, NoSuchAlgorithmException {
-        DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions();
+    @GetMapping("/all/nb/{nbFile}")
+    public DocumentMigrate allInteraction(@PathVariable int nbFile) throws IOException, NoSuchAlgorithmException {
+        DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions(nbFile);
         documentMigrate.setReport(utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B"));
         return documentMigrate;
     }

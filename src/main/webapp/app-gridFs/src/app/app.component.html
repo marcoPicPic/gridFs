@@ -5,37 +5,42 @@
     <mat-expansion-panel>
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Import
+            Etape 1 - Importation des données dans GridFs
         </mat-panel-title>
         <mat-panel-description>
-          Etape 1
+         
         </mat-panel-description>
       </mat-expansion-panel-header>
-      <button class="btn btn-primary" (click)="import()"><i class="fa fa-file-pdf-o"></i> Import</button>
+      <mat-form-field class="example-full-width">
+      <input matInput placeholder="Number of files to import" value="100"  #nbFile>
+      </mat-form-field>
+      <button class="btn btn-primary" (click)="import(nbFile.value)"><i class="fa fa-file-pdf-o"></i> Import</button>
       <mat-list *ngIf="resum !== undefined">
-        <mat-list-item> Nombre de document migrés : {{resum.numberOfDocument}} </mat-list-item>
-        <mat-list-item> Espace disque migré : {{resum.sizeOfDocument}} Mb</mat-list-item>
-        <mat-list-item>Temps total :  {{resum.time}} sec</mat-list-item>
+        <mat-list-item> <b>Nombre de document migrés </b>: {{resum.numberOfDocument}} </mat-list-item>
+        <mat-list-item>  <b>Espace disque migré </b>: {{resum.sizeOfDocument}} Mb</mat-list-item>
+        <mat-list-item> <b>Temps total </b>:  {{resum.time}} sec</mat-list-item>
       </mat-list>
-      <div *ngIf="resum !== undefined">Report par tenant : <textarea matInput type="text" cols="150" rows="9">{{resum.report}}</textarea> </div>
+      <div *ngIf="resum !== undefined">
+          <b>résumé par tenant</b> : <textarea matInput type="text" cols="150" rows="9">{{resum.report}}</textarea>
+      </div>
      
     </mat-expansion-panel>
     <mat-expansion-panel (opened)="panelOpenState = true"
                          (closed)="panelOpenState = false">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          Recherche
+            Etape 2 - Recherche - Exemple de Recherche à partir des métadonnées 
         </mat-panel-title>
         <mat-panel-description>
-          Etape 2
+          
         </mat-panel-description>
       </mat-expansion-panel-header>
         <mat-form-field class="example-full-width">
           <input matInput placeholder="Search email id" value="emailId"  #emailId>
           <mat-list *ngIf="documentInfo !== undefined">
-            <mat-list-item> Nom : {{documentInfo.name}} </mat-list-item>
-            <mat-list-item> Nom du Tenant : {{documentInfo.tenantUuid}} </mat-list-item>
-            <mat-list-item>Taille :  {{documentInfo.size}} Ko</mat-list-item>
+            <mat-list-item> <b>Nom </b>: {{documentInfo.name}} </mat-list-item>
+            <mat-list-item> <b>Nom du Tenant</b>: {{documentInfo.tenantUuid}} </mat-list-item>
+            <mat-list-item><b>Taille </b>:  {{documentInfo.size}} Ko</mat-list-item>
           </mat-list>
         </mat-form-field>
         <button class="btn btn-primary" (click)="infoFile(emailId.value)"><i class="fa fa-file-pdf-o"></i> Info fichier</button>

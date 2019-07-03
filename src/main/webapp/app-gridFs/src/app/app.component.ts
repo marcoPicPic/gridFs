@@ -21,8 +21,8 @@ export class AppComponent {
     private appservice: AppService
   ) { }
 
-  import() {
-    this.appservice.getMigrateFile().subscribe(
+  import(nbFile: number) {
+    this.appservice.getMigrateFile(nbFile).subscribe(
         (res: HttpResponse<Report>) => this.onSuccessMigrate(res),
         (res: HttpResponse<any>) => this.onError(res)
     );

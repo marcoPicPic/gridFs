@@ -128,7 +128,7 @@ public class PocUtils {
 
 
     public String getFileNameRandom(){
-        return getTypeFile(getRandomNumber(0, 2)) + "_file_" + getRandomNumber(1, 3) + ".pdf";
+        return getTypeFile(getRandomNumber(0, 3)) + "_file_" + getRandomNumber(1, 4) + ".pdf";
     }
 
     private String getTypeFile(int typeFile) {
@@ -140,7 +140,7 @@ public class PocUtils {
             default:
                 // code block
         }
-        return "";
+        return "little";
     }
 
 
