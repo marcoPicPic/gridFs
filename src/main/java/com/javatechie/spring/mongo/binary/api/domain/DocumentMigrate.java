@@ -4,10 +4,15 @@ public class DocumentMigrate {
 
     private long numberOfDocument = 0;
     private long sizeOfDocument = 0;
+    private long time;
+    private String report;
 
     public DocumentMigrate(long numberOfDocument, long sizeOfDocument) {
         this.numberOfDocument = numberOfDocument;
         this.sizeOfDocument = sizeOfDocument;
+    }
+
+    public DocumentMigrate() {
     }
 
     public long getNumberOfDocument() {
@@ -32,5 +37,21 @@ public class DocumentMigrate {
 
     public void incrementSizeOfDocument(long attachedFileSize) {
         sizeOfDocument = sizeOfDocument + attachedFileSize;
+    }
+
+    public long getTime() {
+        return time;
+    }
+
+    public void setTime(long time) {
+        this.time = time;
+    }
+
+    public String getReport() {
+        return report;
+    }
+
+    public void setReport(String report) {
+        this.report = report;
     }
 }

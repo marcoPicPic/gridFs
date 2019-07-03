@@ -1,20 +1,24 @@
 package com.javatechie.spring.mongo.binary.api.controller;
 
+import com.javatechie.spring.mongo.binary.api.domain.Document;
+import com.javatechie.spring.mongo.binary.api.domain.DocumentMigrate;
 import com.javatechie.spring.mongo.binary.api.service.DataMigrationService;
 import com.javatechie.spring.mongo.binary.api.utils.Constants;
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
-import com.mongodb.DBObject;
+import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.GridFSFindIterable;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.gridfs.GridFsOperations;
 import org.springframework.data.mongodb.gridfs.GridFsTemplate;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,6 +31,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class InteractionFilesController {
 
 
@@ -44,6 +49,9 @@ public class InteractionFilesController {
 
     @Autowired
     private PocUtils pocUtils;
+
+    @Autowired
+    Utils utils;
 
     @GetMapping("/saveFiles")
     public String saveFile() throws FileNotFoundException {
@@ -77,8 +85,10 @@ public class InteractionFilesController {
     }
 
     @GetMapping("/all")
-    public void allInteraction() throws IOException, NoSuchAlgorithmException {
-        dataMigrationService.migrateInteractions();
+    public DocumentMigrate allInteraction() throws IOException, NoSuchAlgorithmException {
+        DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions();
+        documentMigrate.setReport(utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B"));
+        return documentMigrate;
     }
 
     @GetMapping("/retrieve/image")
@@ -107,6 +117,38 @@ public class InteractionFilesController {
         return "Files retrieved : " + fileNames + pocUtils.getHomeContent();
     }
 
+    @GetMapping("/retrieve/emailId/{emailId}")
+    public Document retrieveFilesEmailId(@PathVariable int emailId) throws IOException {
+        List<GridFSFile> gridFSFiles = new ArrayList<GridFSFile>();
+        gridFsTemplate.find(new Query(Criteria.where("metadata.emailId").is(emailId))).into(gridFSFiles);
+
+        String fileNames = "";
+        Document document = new Document();
+        document.setName(gridFSFiles.get(0).getFilename());
+        document.setTenantUuid(gridFSFiles.get(0).getMetadata().get("tenantUuid").toString());
+        document.setSize(String.valueOf(gridFSFiles.get(0).getLength()/1024));
+
+        return document;
+    }
+
+   @RequestMapping(path = "/download/retrieve/emailId/{emailId}", method = RequestMethod.GET)
+    public ResponseEntity<InputStreamResource> download(@PathVariable int emailId) throws IOException {
+
+       List<GridFSFile> gridFSFiles = new ArrayList<GridFSFile>();
+       gridFsTemplate.find(new Query(Criteria.where("metadata.emailId").is(emailId))).into(gridFSFiles);
+       File file = pocUtils.downloadFile(gridFSFiles.get(0));
+
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Cache-Control", "no-cache, no-store, must-revalidate");
+        headers.add("Pragma", "no-cache");
+        headers.add("Expires", "0");
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(file.length())
+                .contentType(MediaType.parseMediaType("application/octet-stream"))
+                .body(resource);
+    }
 
     @GetMapping("/retrieve/text")
     public String retriveTextFile() throws IOException {
@@ -140,10 +182,4 @@ public class InteractionFilesController {
     }
 
 
-    public void storeDocumentAttachedFile(File file, DBObject metaData, String contentType) throws IOException {
-        FileInputStream fileInputStream = new FileInputStream(file.getAbsolutePath());
-        gridFsOperations.store(fileInputStream, file.getName(), contentType,
-                metaData);
-        fileInputStream.close();
-    }
 }

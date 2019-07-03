@@ -1,7 +1,7 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
-import { AppComponent, BottomSheetOverviewExampleSheet } from './app.component';
+import { AppComponent } from './app.component';
 import {MatInputModule} from '@angular/material/input';
 import {A11yModule} from '@angular/cdk/a11y';
 import {DragDropModule} from '@angular/cdk/drag-drop';
@@ -45,6 +45,8 @@ import {MatTooltipModule} from '@angular/material/tooltip';
 import {MatTreeModule} from '@angular/material/tree';
 import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { AppService } from './app.service';
+import {HttpClientModule} from '@angular/common/http';
 //import {DemoMaterialModule} from './material-module';
 
 
@@ -52,8 +54,7 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 
 @NgModule({
   declarations: [
-    AppComponent,
-    BottomSheetOverviewExampleSheet
+    AppComponent
   ],
   imports: [
     BrowserModule,
@@ -100,9 +101,10 @@ import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
     MatTreeModule,
     PortalModule,
     ScrollingModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HttpClientModule
   ],
-  providers: [],
+  providers: [AppService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

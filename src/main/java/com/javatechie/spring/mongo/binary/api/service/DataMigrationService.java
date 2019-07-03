@@ -22,6 +22,7 @@ import java.util.List;
 
 @Service
 public class DataMigrationService {
+    private static final long NBR_MAX_IMPORT = 40;
     Logger logger = LoggerFactory.getLogger(DataMigrationService.class);
 
     @Autowired
@@ -33,23 +34,36 @@ public class DataMigrationService {
     @Autowired
     private PocUtils pocUtils;
 
+    @Autowired
+    private Utils utils;
+
 
     @Autowired
     private ElasticsearchOperations elasticsearchOperations;
 
     public static final int INDEX_COMMIT_SIZE = 5000;
 
-    public void migrateInteractions() throws IOException, NoSuchAlgorithmException {
+
+    public DocumentMigrate migrateInteractions() throws IOException, NoSuchAlgorithmException {
+        StringBuilder stringBuilder = new StringBuilder();
+
         LocalDateTime startDate = LocalDateTime.now();
-        logger.info("-------- START -------------");
+        stringBuilder.append("\n-------- START -------------");
 
         DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll());
-        logger.info("Debut migrateInteractions : " + startDate);
-        logger.info("fin migrateInteractions : " + LocalDateTime.now());
-        logger.info("Temps total de la migration (secondes): " + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()));
-        logger.info("Nombre de documents copiés : " + documentMigrate.getNumberOfDocument());
-        logger.info("Total des données copiées : " + documentMigrate.getSizeOfDocument());
-        logger.info("-------- END -------------");
+        stringBuilder.append("\n<b>Debut migrateInteractions : </b>" + startDate);
+        stringBuilder.append("\n<br><b>fin migrateInteractions : </b>" + LocalDateTime.now());
+        stringBuilder.append("\n<br><b>Temps total de la migration (secondes): </b>" + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()) + " sec");
+        documentMigrate.setTime(ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()));
+        stringBuilder.append("\n<br><b>Nombre de documents copiés : </b>" + documentMigrate.getNumberOfDocument());
+        stringBuilder.append("\n<br><b>Total des données copiées :</b> " + utils.bytesToMeg(documentMigrate.getSizeOfDocument()) + " Mb");
+        documentMigrate.setSizeOfDocument(utils.bytesToMeg(documentMigrate.getSizeOfDocument()));
+
+        stringBuilder.append("\n<br>-------- END -------------");
+        logger.info(stringBuilder.toString());
+
+
+        return documentMigrate;
         //readInteractionsRandom();
     }
 
@@ -67,8 +81,8 @@ public class DataMigrationService {
                 counter++;
                 size += interactionLog.getAttachedFileSize();
 
-                //TODO to clean
-                if(counter == 10) {
+                //TODO to clean for the test
+                if(counter == NBR_MAX_IMPORT) {
                     writeLogs(interactionLogs);
                     return new DocumentMigrate(counter++, size);
                 }
@@ -113,6 +127,7 @@ public class DataMigrationService {
         elasticsearchOperations.refresh(InteractionLog.class);
         logger.debug("writeLogs completed for index Name : {}", InteractionLog.class);
     }
+
 
 
 }

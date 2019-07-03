@@ -30,7 +30,7 @@ public class SpringMongoGridFsApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) throws Exception {
 		//execute import in gridfs
-		dataMigrationService.migrateInteractions();
-		logger.info(utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B"));
+		//dataMigrationService.migrateInteractions();
+		//logger.info(utils.generateMigrationReport("EE6D2378AD4DAA1D38446E08684AAD3B"));
 	}
 }

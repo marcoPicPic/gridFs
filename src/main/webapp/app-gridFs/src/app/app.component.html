@@ -1,14 +1,54 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <div style="text-align:center">
-  <form class="example-form">
-    <mat-form-field class="example-full-width">
-      <input matInput placeholder="Search email id" value="emailId">
-    </mat-form-field>
-    <button mat-raised-button (click)="openBottomSheet()">Open file</button>
-    <!--<mat-form-field class="example-full-width">
-      <textarea matInput placeholder="Leave a comment"></textarea>
-    </mat-form-field>-->
-  </form>
+
+  <mat-accordion>
+    <mat-expansion-panel>
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Import
+        </mat-panel-title>
+        <mat-panel-description>
+          Etape 1
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+      <button class="btn btn-primary" (click)="import()"><i class="fa fa-file-pdf-o"></i> Import</button>
+      <mat-list *ngIf="resum !== undefined">
+        <mat-list-item> Nombre de document migrés : {{resum.numberOfDocument}} </mat-list-item>
+        <mat-list-item> Espace disque migré : {{resum.sizeOfDocument}} Mb</mat-list-item>
+        <mat-list-item>Temps total :  {{resum.time}} sec</mat-list-item>
+      </mat-list>
+      <div *ngIf="resum !== undefined">Report par tenant : <textarea matInput type="text" cols="150" rows="9">{{resum.report}}</textarea> </div>
+     
+    </mat-expansion-panel>
+    <mat-expansion-panel (opened)="panelOpenState = true"
+                         (closed)="panelOpenState = false">
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          Recherche
+        </mat-panel-title>
+        <mat-panel-description>
+          Etape 2
+        </mat-panel-description>
+      </mat-expansion-panel-header>
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Search email id" value="emailId"  #emailId>
+          <mat-list *ngIf="documentInfo !== undefined">
+            <mat-list-item> Nom : {{documentInfo.name}} </mat-list-item>
+            <mat-list-item> Nom du Tenant : {{documentInfo.tenantUuid}} </mat-list-item>
+            <mat-list-item>Taille :  {{documentInfo.size}} Ko</mat-list-item>
+          </mat-list>
+        </mat-form-field>
+        <button class="btn btn-primary" (click)="infoFile(emailId.value)"><i class="fa fa-file-pdf-o"></i> Info fichier</button>
+        <button class="btn btn-primary" (click)="downloadFile(emailId.value)"><i class="fa fa-file-pdf-o"></i> Download</button>
+      <!--<button mat-raised-button (click)="openBottomSheet()">Open file</button>-->
+        <!--<mat-form-field class="example-full-width">
+          <textarea matInput placeholder="Leave a comment"></textarea>
+        </mat-form-field>-->
+    </mat-expansion-panel>
+  </mat-accordion>
+
+
+  
 </div>
 
 

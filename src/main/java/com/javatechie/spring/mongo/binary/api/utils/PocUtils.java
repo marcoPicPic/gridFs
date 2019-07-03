@@ -1,6 +1,5 @@
 package com.javatechie.spring.mongo.binary.api.utils;
 
-import com.google.common.net.MediaType;
 import com.javatechie.spring.mongo.binary.api.config.DocumentType;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.mongodb.BasicDBObject;
@@ -85,7 +84,7 @@ public class PocUtils {
 
     }
 
-    public void downloadFile(GridFSFile file) throws FileNotFoundException, IOException {
+    public File downloadFile(GridFSFile file) throws FileNotFoundException, IOException {
 
         GridFSDownloadStream gridFSDownloadStream = gridFSBucket.openDownloadStream(file.getObjectId());
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -99,11 +98,14 @@ public class PocUtils {
         }
         byte[] bytesToWriteTo = outputStream.toByteArray();
         gridFSDownloadStream.close();
-        outputStream.writeTo(new FileOutputStream(new File("/var/akio/poc/gridfs/[downloadedUsingGridFS]" + file.getFilename())));
+        File filecreate = new File("/home/mapicavet/sources/perso/spring-mongo-gridFStemplate-master/src/main/resources/download/" + file.getFilename());
+        outputStream.writeTo(new FileOutputStream(filecreate));
         String fileContent = new String(bytesToWriteTo, StandardCharsets.UTF_8);
-        System.out.println(fileContent);
+        //System.out.println(fileContent);
 
-        System.out.println("File name : " + file.getFilename() + " content : " + fileContent);
+        //System.out.println("File name : " + file.getFilename() + " content : " + fileContent);
+
+        return filecreate;
     }
 
     public List<Interaction> createOtherThread() {

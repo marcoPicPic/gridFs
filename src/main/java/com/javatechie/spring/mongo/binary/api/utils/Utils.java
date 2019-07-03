@@ -42,6 +42,8 @@ public class Utils {
     @Autowired
     private ElasticsearchOperations elasticsearchTemplate;
 
+    private static final long  MEGABYTE = 1024L * 1024L;
+
     List<String> possibleFileNames;
     List<Integer> possibleFileSizesInKo;
     List<Integer> possibleTenantIds;
@@ -112,7 +114,7 @@ public class Utils {
     public DBObject generateMetadata(Interaction interaction, File fileToStore) {
         DBObject result = new BasicDBObject();
         result.put("tenantId", interaction.getTenantId());
-        result.put("tenantUuid", interaction.getTenantUuid());
+        result.put("tenantUuid", interaction.getTenantUuid().trim());
         result.put("threadId", interaction.getThreadId());
         result.put("documentType", getContentType(fileToStore.getName()));
         result.put("emailId", interaction.getMailId());
@@ -192,7 +194,7 @@ public class Utils {
         //Iterable<InteractionLog> all = interactionLogRepository.findByImportCode(importCode);
         BoolQueryBuilder filter = new BoolQueryBuilder();
 
-        // Client space
+        // import_code
         filter.must(QueryBuilders.termQuery("import_code", importCode));
 
         //Query
@@ -212,6 +214,10 @@ public class Utils {
             importSummary.add(current);
         }
         return importSummary;
+    }
+
+    public static long bytesToMeg(long bytes) {
+        return bytes / MEGABYTE ;
     }
 
 
