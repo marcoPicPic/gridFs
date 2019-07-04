@@ -1,56 +1,50 @@
 package com.javatechie.spring.mongo.binary.api.domain;
 
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.Date;
 
 
-@Document(indexName = "gridfs_activities", type = "gridfsLogs")
+//@Document(indexName = "gridfs_activities", type = "gridfsLogs")
+@Document(collection = "gridfs_activities")
 public class InteractionLog {
 
-    @Id
-    @Field(type = FieldType.Integer)
-    private Integer id;
-
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("import_code")
+    @Field("import_code")
     private String importCode;
 
-    @Field(type = FieldType.Integer)
-    @JsonProperty("tenant_id")
+
+    @Field("tenant_id")
     private Integer tenantId;
 
-    @Field(type = FieldType.Date)
-    @JsonProperty("date_import")
+
+    @Field("date_import")
     private Date dateImport;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("tenant_uuid")
+
+    @Field("tenant_uuid")
     private String tenantUuid;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("thread_id")
+
+    @Field("thread_id")
     private Integer threadId;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("mail_id")
+
+    @Field("mail_id")
     private Integer mailId;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("parsed_mail_id")
+
+    @Field("parsed_mail_id")
     private Integer parsedMailId;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("attached_file_size")
+
+    @Field("attached_file_size")
     private long attachedFileSize;
 
-    @Field(type = FieldType.Keyword)
-    @JsonProperty("attached_file_name")
+
+    @Field("attached_file_name")
     private String attachedFileName;
 
     public InteractionLog( Date dateImport, Integer tenantId,
@@ -72,13 +66,6 @@ public class InteractionLog {
         super();
     }
 
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 
     public Integer getTenantId() {
         return tenantId;

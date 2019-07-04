@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpResponse , HttpHeaders} from '@angular/common/http';
 import { Observable, from } from 'rxjs';
-import { Report } from './Report';
+import { Report } from './report';
 import {Document} from './document';
 
 
@@ -11,9 +11,9 @@ export class AppService {
 
     constructor(private http: HttpClient) {}
 
-    public getMigrateFile(nbFile: number): Observable<HttpResponse<Report>> {
+    public getMigrateFile(nbFile: string, little: boolean, medium: boolean, big: boolean): Observable<HttpResponse<Report>> {
         return this.http.get<Report>(
-          `${this.resourceUrl}/all/nb/${nbFile}`, { observe: 'response' });
+          `${this.resourceUrl}/all/nb/${nbFile}/little/${little}/medium/${medium}/big/${big}`, { observe: 'response' });
       }
 
       public getInfoDocumentByEmailId(emailId: number): Observable<HttpResponse<Document>> {

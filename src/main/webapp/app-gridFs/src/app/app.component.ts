@@ -1,8 +1,9 @@
 import { Component } from '@angular/core';
 import { AppService } from './app.service';
 import {HttpResponse} from '@angular/common/http';
-import { Report } from './Report';
+import { Report } from './report';
 import {Document} from './document';
+
 
 
 @Component({
@@ -16,13 +17,17 @@ export class AppComponent {
   panelOpenState = false;
   resum: Report;
   documentInfo: Document;
+  nbFile: string = '100';
+  little: boolean  =  true;
+  medium: boolean  =  false;
+  big: boolean  =  false;
 
   constructor(
     private appservice: AppService
   ) { }
 
-  import(nbFile: number) {
-    this.appservice.getMigrateFile(nbFile).subscribe(
+  import() {
+    this.appservice.getMigrateFile(this.nbFile, this.little, this.medium, this.big).subscribe(
         (res: HttpResponse<Report>) => this.onSuccessMigrate(res),
         (res: HttpResponse<any>) => this.onError(res)
     );
@@ -43,12 +48,10 @@ export class AppComponent {
     );
   }
 
+
   private onSuccessInfo(data) {
     this.documentInfo = data.body;
   }
-
-
-
 
 
   /*downloadFile(id: number, contentType: string) {

@@ -1,11 +1,10 @@
 package com.javatechie.spring.mongo.binary.api.repository;
 
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface InteractionLogRepository extends ElasticsearchRepository<InteractionLog, String> {
+
+public interface InteractionLogRepository extends MongoRepository<InteractionLog, String> {
     Iterable<InteractionLog> findByImportCode(String importCode);
 
 

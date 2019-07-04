@@ -1,21 +1,13 @@
 package com.javatechie.spring.mongo.binary.api.utils;
 
 import com.google.common.net.MediaType;
-import com.javatechie.spring.mongo.binary.api.domain.DocumentMigrate;
 import com.javatechie.spring.mongo.binary.api.domain.ImportSummary;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionLogRepository;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
-import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Component;
 
 import javax.xml.bind.DatatypeConverter;
@@ -26,10 +18,10 @@ import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.*;
-
-import static org.elasticsearch.index.query.QueryBuilders.matchAllQuery;
-import static org.elasticsearch.search.aggregations.AggregationBuilders.terms;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Component
 public class Utils {
@@ -39,8 +31,7 @@ public class Utils {
     @Autowired
     private InteractionLogRepository interactionLogRepository;
 
-    @Autowired
-    private ElasticsearchOperations elasticsearchTemplate;
+
 
     private static final long  MEGABYTE = 1024L * 1024L;
 
@@ -138,7 +129,7 @@ public class Utils {
 
     private String buildSummaryMessage(ImportSummary importResultsSummary) {
         StringBuilder summary = new StringBuilder();
-        summary.append("\n==================================== IMPORT SUMMARY ====================================");
+        //summary.append("\n==================================== IMPORT SUMMARY ====================================");
         summary.append("\n");
         summary.append(" Import : " + importResultsSummary.getImportCode() + "\n");
         Set<Integer> tenantIds = importResultsSummary.getInfosByTenant().keySet();
@@ -169,7 +160,7 @@ public class Utils {
         interactionLog.setAttachedFileName(possibleFileNames.get(getRandomCeiledNumber(possibleFileNames.size() - 1)));
         interactionLog.setAttachedFileSize(possibleFileSizesInKo.get(getRandomCeiledNumber(possibleFileSizesInKo.size() - 1)));
         interactionLog.setDateImport(date);
-        interactionLog.setId(id);
+
         interactionLog.setImportCode(importCode);
         interactionLog.setMailId(possibleMailIds.get(getRandomCeiledNumber(possibleMailIds.size() - 1)));
         interactionLog.setParsedMailId(possibleParsedMailIds.get(getRandomCeiledNumber(possibleParsedMailIds.size() - 1)));
@@ -193,26 +184,9 @@ public class Utils {
     public ImportSummary getImportResultsSummary(String importCode) {
         ImportSummary importSummary = new ImportSummary();
         importSummary.setImportCode(importCode);
-        //Iterable<InteractionLog> all = interactionLogRepository.findByImportCode(importCode);
-        BoolQueryBuilder filter = new BoolQueryBuilder();
+        Iterable<InteractionLog> interactionLogs = interactionLogRepository.findByImportCode(importCode);
 
-        // import_code
-        filter.must(QueryBuilders.termQuery("import_code.keyword", importCode));
-
-        //Query
-        SearchQuery query = new NativeSearchQueryBuilder()
-                .withQuery(matchAllQuery())
-                .withFilter(filter)
-                //.withSort(new FieldSortBuilder(ElasticConstant.DATE_STAT).order(SortOrder.DESC))
-                .withPageable(PageRequest.of(0, 10000))
-                .build();
-
-        //Result
-        Page<InteractionLog> all = elasticsearchTemplate.queryForPage(
-                query,
-                InteractionLog.class);
-
-        for(InteractionLog current : all) {
+        for(InteractionLog current : interactionLogs) {
             importSummary.add(current);
         }
         return importSummary;

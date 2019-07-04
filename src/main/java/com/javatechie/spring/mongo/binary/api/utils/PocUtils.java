@@ -2,6 +2,7 @@ package com.javatechie.spring.mongo.binary.api.utils;
 
 import com.javatechie.spring.mongo.binary.api.config.DocumentType;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
+import com.javatechie.spring.mongo.binary.api.domain.ParameterMigrate;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.client.gridfs.GridFSBucket;
@@ -13,9 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 @Component
 public class PocUtils {
@@ -30,20 +29,6 @@ public class PocUtils {
 
 
 
-    public String getHomeContent() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<style>a {font-size: 30px; text-decoration: none; color: red;}</style>");
-        sb.append("\n<br/>\n<br/>");
-        sb.append("<a href=\"http://localhost:9999/\" alt=\"home\" title=\"home\">&#127968;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/saveFiles\" alt=\"save files\" title=\"save files\">&#128190;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/retrieve/image\" alt=\"retrieve image\" title=\"retrieve image\">&#128444;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/retrieve/text\" alt=\"retrieve text\" title=\"retrieve text\">&#128441;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/retrieve/tenant/f0e59e00-ed4c-4068-bf7c-f99e69ab4fc1\" alt=\"retrieve files for tenant 1\" title=\"retrieve files for tenant 1\">T &#49;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/retrieve/tenant/c725b4b2-dabb-4c3f-a149-8fb40da331f6\" alt=\"retrieve files for tenant 2\" title=\"retrieve files for tenant 2\">T &#50;</a><br/>\n");
-        sb.append("<a href=\"http://localhost:9999/deleteFiles\" alt=\"delete files\" title=\"delete files\">&#128465;</a><br/>\n");
-        return sb.toString();
-    }
-
     public void storeFirstDocument() throws FileNotFoundException {
 
         DBObject metaData = getMetaData(new Integer(Constants.TENANT_ID_1), Constants.TENANT_UUID_1, new Integer(Constants.THREAD_ID_1), DocumentType.IMAGE, "image");
@@ -53,7 +38,7 @@ public class PocUtils {
 
 
         String fileId = String.valueOf(gridFsOperations.store(inputStream, "logo.png", "image/png", metaData));
-        System.out.println("File id stored : " + fileId);
+
     }
 
     public void storeSecondDocument() throws FileNotFoundException {
@@ -84,12 +69,10 @@ public class PocUtils {
 
     }
 
-    public File downloadFile(GridFSFile file) throws FileNotFoundException, IOException {
+    public File downloadFile(GridFSFile file) throws IOException {
 
         GridFSDownloadStream gridFSDownloadStream = gridFSBucket.openDownloadStream(file.getObjectId());
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-        String filename = file.getFilename();
 
         int data = gridFSDownloadStream.read();
         while (data >= 0) {
@@ -101,10 +84,6 @@ public class PocUtils {
         File filecreate = new File("/home/mapicavet/sources/perso/spring-mongo-gridFStemplate-master/src/main/resources/download/" + file.getFilename());
         outputStream.writeTo(new FileOutputStream(filecreate));
         String fileContent = new String(bytesToWriteTo, StandardCharsets.UTF_8);
-        //System.out.println(fileContent);
-
-        //System.out.println("File name : " + file.getFilename() + " content : " + fileContent);
-
         return filecreate;
     }
 
@@ -122,25 +101,18 @@ public class PocUtils {
         Interaction interaction = new Interaction();
         interaction.setId(getRandomNumber(9999, 1000000));
         interaction.setMailId(getRandomNumber(9999, 1000000));
-        interaction.setFileName(getFileNameRandom());
+        //interaction.setFileName(getFileNameRandom());
         return interaction;
     }
 
 
-    public String getFileNameRandom(){
-        return getTypeFile(getRandomNumber(0, 3)) + "_file_" + getRandomNumber(1, 4) + ".pdf";
+    public String getFileNameRandom(ParameterMigrate parameterMigrate){
+        return getTypeFile(parameterMigrate) + "_file_" + getRandomNumber(1, 4) + ".pdf";
     }
 
-    private String getTypeFile(int typeFile) {
-
-        switch (typeFile) {
-            case 0 : return "little";
-            case 1 : return "medium";
-            case 2 : return "big";
-            default:
-                // code block
-        }
-        return "little";
+    private String getTypeFile(ParameterMigrate parameterMigrate) {
+        Map<Integer, String> mapTypeFile = parameterMigrate.getMapTypeFile();
+        return mapTypeFile.get(getRandomNumber(0, mapTypeFile.size()));
     }
 
 

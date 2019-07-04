@@ -47,6 +47,7 @@ import {platformBrowserDynamic} from '@angular/platform-browser-dynamic';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import { AppService } from './app.service';
 import {HttpClientModule} from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 //import {DemoMaterialModule} from './material-module';
 
 
@@ -102,7 +103,8 @@ import {HttpClientModule} from '@angular/common/http';
     PortalModule,
     ScrollingModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    FormsModule
   ],
   providers: [AppService],
   bootstrap: [AppComponent]

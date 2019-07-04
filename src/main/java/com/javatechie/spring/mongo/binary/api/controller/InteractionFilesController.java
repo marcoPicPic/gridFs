@@ -31,7 +31,6 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 public class InteractionFilesController {
 
 
@@ -81,13 +80,16 @@ public class InteractionFilesController {
         gridFsOperations.find(new Query()).into(resultList);
         assertEquals(3, resultList.size());
 
-        return resultList.size() + " files stored successfully..." + pocUtils.getHomeContent();
+        return resultList.size() + " files stored successfully..." ;
     }
 
-    @GetMapping("/all/nb/{nbFile}")
-    public DocumentMigrate allInteraction(@PathVariable int nbFile) throws IOException, NoSuchAlgorithmException {
-        DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions(nbFile);
-        documentMigrate.setReport(utils.generateMigrationReport(documentMigrate.getImportCode()));
+    @GetMapping("/all/nb/{nbFile}/little/{little}/medium/{medium}/big/{big}")
+    public DocumentMigrate allInteraction(@PathVariable int nbFile,
+                                          @PathVariable boolean little,
+                                          @PathVariable boolean medium,
+                                          @PathVariable boolean big) throws IOException, NoSuchAlgorithmException {
+        DocumentMigrate documentMigrate = dataMigrationService.migrateInteractions(nbFile, little, medium, big);
+        documentMigrate.setReport(documentMigrate.getReport() + utils.generateMigrationReport(documentMigrate.getImportCode()));
         return documentMigrate;
     }
 
@@ -96,7 +98,7 @@ public class InteractionFilesController {
         GridFSFile gridFsFile = gridFsTemplate.findOne(new Query(Criteria.where("_id").is(Constants.FILE_ID)));
 
         pocUtils.downloadFile(gridFsFile);
-        return "Image File retrieved with name containing : " + gridFsFile.getFilename() + pocUtils.getHomeContent();
+        return "Image File retrieved with name containing : " + gridFsFile.getFilename() ;
     }
 
     @GetMapping("/retrieve/tenant/{tenantUuid}")
@@ -114,7 +116,7 @@ public class InteractionFilesController {
             }
         }
 
-        return "Files retrieved : " + fileNames + pocUtils.getHomeContent();
+        return "Files retrieved : " + fileNames ;
     }
 
     @GetMapping("/retrieve/emailId/{emailId}")
@@ -157,14 +159,14 @@ public class InteractionFilesController {
 
         pocUtils.downloadFile(dbFile);
 
-        return "Text File retrieved with name containing : " + dbFile.getFilename() + pocUtils.getHomeContent();
+        return "Text File retrieved with name containing : " + dbFile.getFilename();
     }
 
     @GetMapping("/deleteFiles")
     public String deleteFiles() {
         doDeleteFiles();
 
-        return "Files deleted." + pocUtils.getHomeContent();
+        return "Files deleted.";
     }
 
     private void doDeleteFiles() {
@@ -174,11 +176,6 @@ public class InteractionFilesController {
 
         gridFsOperations.find(new Query()).into(resultList);
         assertEquals(0, resultList.size());
-    }
-
-    @GetMapping("/")
-    public String home() {
-        return pocUtils.getHomeContent();
     }
 
 

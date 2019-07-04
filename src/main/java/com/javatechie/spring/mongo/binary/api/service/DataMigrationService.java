@@ -3,14 +3,14 @@ package com.javatechie.spring.mongo.binary.api.service;
 import com.javatechie.spring.mongo.binary.api.domain.DocumentMigrate;
 import com.javatechie.spring.mongo.binary.api.domain.Interaction;
 import com.javatechie.spring.mongo.binary.api.domain.InteractionLog;
+import com.javatechie.spring.mongo.binary.api.domain.ParameterMigrate;
+import com.javatechie.spring.mongo.binary.api.repository.InteractionLogRepository;
 import com.javatechie.spring.mongo.binary.api.repository.InteractionRepository;
 import com.javatechie.spring.mongo.binary.api.utils.PocUtils;
 import com.javatechie.spring.mongo.binary.api.utils.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
-import org.springframework.data.elasticsearch.core.query.IndexQuery;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -29,6 +29,9 @@ public class DataMigrationService {
     private InteractionRepository interactionRepository;
 
     @Autowired
+    private InteractionLogRepository interactionLogRepository;
+
+    @Autowired
     private GridFsService gridFsService;
 
     @Autowired
@@ -38,61 +41,56 @@ public class DataMigrationService {
     private Utils utils;
 
 
-    @Autowired
-    private ElasticsearchOperations elasticsearchOperations;
 
-    public static final int INDEX_COMMIT_SIZE = 5000;
-
-
-    public DocumentMigrate migrateInteractions(int nbFile) throws IOException, NoSuchAlgorithmException {
+    public DocumentMigrate migrateInteractions(int nbFile, boolean little, boolean medium, boolean big) throws IOException, NoSuchAlgorithmException {
+        ParameterMigrate parameterMigrate = new ParameterMigrate(nbFile, little, medium, big);
         StringBuilder stringBuilder = new StringBuilder();
 
         LocalDateTime startDate = LocalDateTime.now();
-        stringBuilder.append("\n-------- START -------------");
-
-        DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll(), nbFile);
-        stringBuilder.append("\n<b>Debut migrateInteractions : </b>" + startDate);
-        stringBuilder.append("\n<br><b>fin migrateInteractions : </b>" + LocalDateTime.now());
-        stringBuilder.append("\n<br><b>Temps total de la migration (secondes): </b>" + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()) + " sec");
+        stringBuilder.append("\n------------- START -------------");
+        DocumentMigrate documentMigrate = readInteractionsView(interactionRepository.findAll(), parameterMigrate);
+        stringBuilder.append("\nDebut migrateInteractions : " + startDate);
+        stringBuilder.append("\nFin migrateInteractions : " + LocalDateTime.now());
+        stringBuilder.append("\nTemps total de la migration (secondes): " + ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()) + " sec");
         documentMigrate.setTime(ChronoUnit.SECONDS.between(startDate, LocalDateTime.now()));
-        stringBuilder.append("\n<br><b>Nombre de documents copiés : </b>" + documentMigrate.getNumberOfDocument());
-        stringBuilder.append("\n<br><b>Total des données copiées :</b> " + utils.bytesToMeg(documentMigrate.getSizeOfDocument()) + " Mb");
+        stringBuilder.append("\nNombre de documents copiés : " + documentMigrate.getNumberOfDocument());
+        stringBuilder.append("\nTotal des données copiées : " + utils.bytesToMeg(documentMigrate.getSizeOfDocument()) + " MB");
         documentMigrate.setSizeOfDocument(utils.bytesToMeg(documentMigrate.getSizeOfDocument()));
 
-        stringBuilder.append("\n<br>-------- END -------------");
+        stringBuilder.append("\n-------------  -------------\n\n");
         logger.info(stringBuilder.toString());
-
+        documentMigrate.setReport(stringBuilder.toString());
 
         return documentMigrate;
         //readInteractionsRandom();
     }
 
 
-    public DocumentMigrate readInteractionsView(List<Interaction> interactionList, int nbFile) throws NoSuchAlgorithmException {
+    public DocumentMigrate readInteractionsView(List<Interaction> interactionList, ParameterMigrate parameterMigrate) throws NoSuchAlgorithmException {
         long counter =0;
         long size = 0;
         List<InteractionLog> interactionLogs = new ArrayList<>();
-        String importCode = Utils.generateUniqueImportCode();
+        parameterMigrate.setImportCode(Utils.generateUniqueImportCode());
 
         for (Interaction interaction : interactionList) {
             try {
-                InteractionLog interactionLog = gridFsService.indexInteractionData(interaction, importCode);
+                InteractionLog interactionLog = gridFsService.indexInteractionData(interaction, parameterMigrate);
                 interactionLogs.add(interactionLog);
                 counter++;
                 size += interactionLog.getAttachedFileSize();
 
-                if(counter == nbFile) {
+                if(counter == parameterMigrate.getNbFile()) {
                     writeLogs(interactionLogs);
-                    return new DocumentMigrate(counter++, size, importCode);
+                    return new DocumentMigrate(counter++, size, parameterMigrate.getImportCode());
                 }
             } catch (IOException e) {
                 logger.error("Erreur d'ecriture - threadId : " + interaction.getThreadId());
                 writeLogs(interactionLogs);
-                return new DocumentMigrate(counter++, size, importCode);
+                return new DocumentMigrate(counter++, size, parameterMigrate.getImportCode());
             }
         }
         writeLogs(interactionLogs);
-        return new DocumentMigrate(counter++, size, importCode);
+        return new DocumentMigrate(counter++, size, parameterMigrate.getImportCode());
     }
 
     private void readInteractionsRandom() {
@@ -106,27 +104,9 @@ public class DataMigrationService {
     }
 
     public void writeLogs(List<InteractionLog> interactionLogs) {
-        int counter = 0;
-        List<IndexQuery> queries = new ArrayList<>();
-
-        for (InteractionLog o : interactionLogs) {
-            IndexQuery indexQuery = new IndexQuery();
-            indexQuery.setObject(o);
-            queries.add(indexQuery);
-            if (counter % INDEX_COMMIT_SIZE == 0) {
-                elasticsearchOperations.bulkIndex(queries);
-                queries.clear();
-                logger.debug("writeLogs counter : {}", counter);
-            }
-            counter++;
-        }
-        if (!queries.isEmpty()) {
-            elasticsearchOperations.bulkIndex(queries);
-        }
-        elasticsearchOperations.refresh(InteractionLog.class);
+        interactionLogRepository.saveAll(interactionLogs);
         logger.debug("writeLogs completed for index Name : {}", InteractionLog.class);
     }
-
 
 
 }
