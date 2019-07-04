@@ -138,15 +138,17 @@ public class Utils {
 
     private String buildSummaryMessage(ImportSummary importResultsSummary) {
         StringBuilder summary = new StringBuilder();
-        summary.append("\n<br/>==================================== IMPORT SUMMARY ====================================");
-        summary.append("\n<br/>");
-        summary.append(" import : " + importResultsSummary.getImportCode() + "\n<br/>");
+        summary.append("\n==================================== IMPORT SUMMARY ====================================");
+        summary.append("\n");
+        summary.append(" Import : " + importResultsSummary.getImportCode() + "\n");
         Set<Integer> tenantIds = importResultsSummary.getInfosByTenant().keySet();
         for(Integer tenantId : tenantIds) {
-            summary.append("tenant id : " + tenantId + " \n<br/>");
-            summary.append("number of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getNumberOfDocument() + " \n<br/>");
-            summary.append("volume of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getSizeOfDocument() + " \n<br/>");
-            summary.append("\n<br/>");
+            summary.append("-------------------------------\n\n");
+            summary.append("Tenant id : " + tenantId + " \n");
+            summary.append("Number of documents processed : " + importResultsSummary.getInfosByTenant().get(tenantId).getNumberOfDocument() + " \n");
+            summary.append("Volume of documents processed : " + bytesToMeg(importResultsSummary.getInfosByTenant().get(tenantId).getSizeOfDocument()) + " \n");
+            summary.append("-------------------------------\n\n");
+            summary.append("\n");
         }
         return summary.toString();
     }

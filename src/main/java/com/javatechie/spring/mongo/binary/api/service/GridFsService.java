@@ -63,7 +63,7 @@ public class GridFsService {
         String fileName = fileToStore.getName();
         long fileSize = fileToStore.length();
         DBObject metaData = utils.generateMetadata(interaction, fileToStore);
-       storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
+        storeDocumentAttachedFile(fileToStore, metaData, (String) metaData.get("documentType"));
 
         return new InteractionLog(
                 new Date(),

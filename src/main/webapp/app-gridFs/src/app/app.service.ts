@@ -26,10 +26,4 @@ export class AppService {
         headers = headers.set('Accept', 'application/pdf');
         return this.http.get( `${this.resourceUrl}/download/retrieve/emailId/${emailId}`, { headers: headers, responseType: 'blob' });
       }
-
-
-     /* downloadFile(id: number, contentType: string) {
-        return this.http.get('http://localhost:9999//retrieve/emailId/12',
-         { headers: new HttpHeaders().append('Content-Type', contentType), responseType: 'blob', observe: 'body' });
-        }*/
 }
